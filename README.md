@@ -59,3 +59,4 @@ The `DataLoader` class preloads all necessary data, including products and users
 - **Frontend**: Uses Thymeleaf templates and Bootstrap for styling.
 - **Backend**: Built with Spring Boot, handling business logic and database interactions.
 - **APIs**: RESTful APIs are provided for showing and filtering products in the shop using htmx.
+- **Forgot Password**: To make forgot password work(SMTP), you should provide credentials for your own email configuration in application.properties.
