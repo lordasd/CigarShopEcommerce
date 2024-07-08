@@ -1,6 +1,8 @@
 # README
 
-### Submitted by: **David Zaydenberg - Davidzay@edu.hac.ac.il** 
+### Submitted by: 
+**David Zaydenberg - Davidzay@edu.hac.ac.il** 
+**Ron Elian - Ronel@edu.hac.ac.il**
 
 ## General Functionality of the Website
 
