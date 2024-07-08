@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+<div class="container mt-4">
+    <h1>User Profile</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${user.firstName + ' ' + user.lastName}">Full Name</h5>
+            <p class="card-text"><strong>Username:</strong> <span th:text="${user.username}">Username</span></p>
+            <p class="card-text"><strong>Email:</strong> <span th:text="${user.email}">Email</span></p>
+        </div>
+    </div>
+
+    <h2 class="mt-4">Purchase History</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Total Price</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.id}">Order ID</td>
+            <td th:text="${order.getTotalPrice()}">Total Price</td>
+            <td th:text="${order.status}">Status</td>
+            <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}">Date</td>
+            <td>
+                <form th:action="@{'/admin/user/' + ${user.id} + '/order/' + ${order.id} + '/status'}" method="post">
+                    <select name="status">
+                        <option value="PENDING" th:selected="${order.status == 'PENDING'}">PENDING</option>
+                        <option value="SHIPPED" th:selected="${order.status == 'SHIPPED'}">SHIPPED</option>
+                        <option value="DELIVERED" th:selected="${order.status == 'DELIVERED'}">DELIVERED</option>
+                        <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">CANCELLED</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(orders)}">
+            <td colspan="5" class="text-center">No orders found</td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="/admin" class="btn btn-secondary">Back</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

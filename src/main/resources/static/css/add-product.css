@@ -1,0 +1,9 @@
+body {
+    background: url('../images/img6.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+.container-bg {
+    background-color: rgba(255, 255, 255, 0.8); /* Optional: To make the container a bit transparent */
+    padding: 20px;
+    border-radius: 8px;
+}

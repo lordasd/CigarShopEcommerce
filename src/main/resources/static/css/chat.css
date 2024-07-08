@@ -1,0 +1,47 @@
+body {
+    background: url('../images/img5.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+.container-bg {
+    background-color: rgba(255, 255, 255, 0.8); /* Optional: To make the container a bit transparent */
+    padding: 20px;
+    border-radius: 8px;
+}
+.chat-container {
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+}
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+}
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 0.25rem;
+    max-width: 75%;
+}
+.message-sent {
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end;
+    margin-left: auto;
+}
+.message-received {
+    background-color: #6c757d;
+    color: white;
+}
+.message-system {
+    background-color: #ffc107;
+    color: black;
+    align-self: center;
+}
+#supportQueue {
+    max-height: 200px;
+    overflow-y: auto;
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <script src="https://unpkg.com/htmx.org@2.0.0"></script>
+    <script th:src="@{/js/index.js}"></script>
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+<div class="container container-bg mt-4">
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <input type="text" id="searchInput" name="search" class="form-control"
+                   placeholder="Search by product name"
+                   th:hx-get="@{/product/search}"
+                   hx-trigger="keyup changed delay:500ms"
+                   hx-target="#productTable">
+        </div>
+        <div class="col-md-4">
+            <select id="categoryFilter" class="form-control"
+                    th:hx-get="@{/product/filter}"
+                    hx-trigger="change"
+                    hx-target="#productTable"
+                    name="category">
+                <option value="">All Categories</option>
+                <option value="Cigars">Cigars</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Lighters">Lighters</option>
+                <option value="Humidors">Humidors</option>
+                <option value="Cutters">Cutters</option>
+            </select>
+        </div>
+    </div>
+    <h1>Items</h1>
+    <div id="productTable" hx-trigger="load" hx-get="/product/list">
+        <!-- Product table will be loaded here -->
+    </div>
+</div>
+
+<!-- Spinner -->
+<div id="spinner" class="spinner-overlay">
+    <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden"></span>
+    </div>
+    <div class="text-light">Loading...</div>
+</div>
+
+<!-- Toast Notification -->
+<div aria-live="polite" aria-atomic="true" class="position-relative" style="min-height: 200px;">
+    <div class="toast" style="position: absolute; top: -150px; right: 150px; z-index: 1050; background-color: #d4edda; color: #155724;" data-delay="3000">
+        <div class="toast-header" style="background-color: #d4edda; color: #155724;">
+            <strong class="me-auto">Notification</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+            Item added to cart successfully!
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<div th:fragment="productList">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Quantity</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td>
+                <a th:href="@{'/product/' + ${product.id}}" th:text="${product.name}">Product Name</a>
+            </td>
+            <td th:text="${product.price}">Product Price</td>
+            <td th:text="${product.brand}">Product Brand</td>
+            <td th:text="${product.category}">Product Category</td>
+            <td th:text="${product.description}">Product Description</td>
+            <td>
+                <form th:hx-post="@{/cart/add}" hx-swap="none" hx-target="#cart-count">
+                    <input type="hidden" name="productId" th:value="${product.id}">
+                    <div class="row">
+                        <div class="col">
+                            <label class="form-label" th:for="'quantity_' + ${product.id}"></label>
+                            <input type="number" name="quantity" value="1" min="1" th:max="${product.stockQuantity}" class="form-control" th:id="'quantity_' + ${product.id}">
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        </div>
+                        <div class="col mt-4">
+                            <button type="submit" class="btn btn-primary" th:disabled="${product.stockQuantity == 0}">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div th:if="${product.stockQuantity == 0}" class="text-danger mt-2">Out of Stock</div>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background: url('/images/img6.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .container-bg {
+            background-color: rgba(255, 255, 255, 0.8); /* Optional: To make the container a bit transparent */
+            padding: 20px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+<div class="container-fluid py-4 container-bg">
+    <h1 class="text-center mb-4">Admin Dashboard</h1>
+
+    <div class="row g-4">
+        <div class="col-12 col-md-6">
+            <div class="card h-100">
+                <div class="card-header">Sales Analytics</div>
+                <div class="card-body">
+                    <p>Total Sales: <span th:text="${totalSales}">$0.00</span></p>
+                    <p>Total Orders: <span th:text="${totalOrders}">0</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card h-100">
+                <div class="card-header">Customer Management</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="user : ${users}" th:unless="${#lists.isEmpty(users)}">
+                                <td th:text="${user.username}">Username</td>
+                                <td th:text="${user.email}">Email</td>
+                                <td th:text="${user.firstName}">First Name</td>
+                                <td th:text="${user.lastName}">Last Name</td>
+                                <td>
+                                    <a th:href="@{'/admin/user/' + ${user.id}}" class="btn btn-primary btn-sm">Details</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(users)}">
+                                <td colspan="5" class="text-center">No users found</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">Product Management</div>
+                <div class="card-body">
+                    <a href="/admin/product/add" class="btn btn-primary mb-3">Add Product</a>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Product ID</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Stock Quantity</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="product : ${products}" th:unless="${#lists.isEmpty(products)}">
+                                <td th:text="${product.productId}">Product ID</td>
+                                <td th:text="${product.name}">Name</td>
+                                <td th:text="${product.price}">Price</td>
+                                <td th:text="${product.stockQuantity}"
+                                    th:classappend="${product.stockQuantity < 10} ? 'text-danger' : ''">Stock Quantity
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{'/product/' + ${product.id}}" class="btn btn-info btn-sm">View</a>
+                                        <a th:href="@{'/admin/product/edit/' + ${product.id}}" class="btn btn-secondary btn-sm">Edit</a>
+                                        <form th:action="@{'/admin/product/delete/' + ${product.id}}" method="post" class="d-inline">
+                                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(products)}">
+                                <td colspan="5" class="text-center">No products found</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">Sales Reports</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>User</th>
+                                <th>Total Price</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="order : ${orders}" th:unless="${#lists.isEmpty(orders)}">
+                                <td th:text="${order.id}">Order ID</td>
+                                <td th:text="${order.user.username}">User</td>
+                                <td th:text="${order.totalPrice}">Total Price</td>
+                                <td th:text="${order.status}">Status</td>
+                                <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}">Date</td>
+                                <td>
+                                    <form th:action="@{'/admin/order/' + ${order.id} + '/status'}" method="post">
+                                        <select name="status" class="form-select form-select-sm mb-2">
+                                            <option value="PENDING" th:selected="${order.status == 'PENDING'}">PENDING</option>
+                                            <option value="SHIPPED" th:selected="${order.status == 'SHIPPED'}">SHIPPED</option>
+                                            <option value="DELIVERED" th:selected="${order.status == 'DELIVERED'}">DELIVERED</option>
+                                            <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">CANCELLED</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(orders)}">
+                                <td colspan="6" class="text-center">No orders found</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Add this near the end of your body tag -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">Notification</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="notificationModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notificationData"
+         th:data-message="${notificationMessage}"
+         th:data-type="${notificationType}"
+         style="display: none;"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

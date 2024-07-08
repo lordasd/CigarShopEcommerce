@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Navbar</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+<div th:fragment="navbar">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+        <a class="navbar-brand" th:href="@{/}">Shop</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/cart}">
+                        <i class="bi bi-cart"></i> Cart <span id="cart-count" class="badge badge-pill badge-primary" th:text="${cartSize}"></span>
+                    </a>
+                </li>
+                <li class="nav-item" th:if="${not #authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link" th:href="@{/login}">Login</a>
+                </li>
+                <li class="nav-item" th:if="${not #authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link" th:href="@{/register}">Register</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link" th:href="@{/account}">Account</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/admin}">Admin</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        <button type="submit" class="nav-link btn btn-link">Logout</button>
+                    </form>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/chat}">Chat</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+</body>
+</html>

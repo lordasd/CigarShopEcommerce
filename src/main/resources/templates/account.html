@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Account</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background: url('/images/img6.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .container-bg {
+            background-color: rgba(255, 255, 255, 0.8); /* Optional: To make the container a bit transparent */
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .container-fluid { margin-top: 20px; }
+        .list-group-item a { text-decoration: none; color: #000; }
+        .list-group-item a:hover { text-decoration: none; color: #007bff; }
+        .card-header { background-color: #007bff; color: #fff; }
+        .card-body p { margin: 0; }
+        .form-container { max-width: 600px; margin: 0 auto; }
+    </style>
+    <script th:src="@{/js/account.js}"></script>
+</head>
+<body>
+<div th:insert="~{fragments/navbar.html :: navbar}"></div>
+<div class="container-fluid container-bg">
+    <div class="row">
+        <div class="col-md-3">
+            <h4 class="mb-3">My Account</h4>
+            <div class="list-group mb-4">
+                <a href="#" class="list-group-item list-group-item-action">Account Dashboard</a>
+                <a href="#" class="list-group-item list-group-item-action">Account Information</a>
+                <a href="#reviews" class="list-group-item list-group-item-action">My Product Reviews</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card mb-3 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">My Dashboard</h5>
+                </div>
+                <div class="card-body">
+                    <p>Hello, <strong><span th:text="${user.firstName}">First Name</span> <span th:text="${user.lastName}">Last Name</span></strong>!</p>
+                </div>
+            </div>
+            <div class="card mb-3 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Contact Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong><span th:text="${user.firstName}">First Name</span> <span th:text="${user.lastName}">Last Name</span></strong><br>
+                        <span th:text="${user.email}">Email</span></p>
+                </div>
+            </div>
+            <div class="card mb-3 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Change Password</h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/account/changePassword}" method="post" class="needs-validation form-container" novalidate>
+                        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+                        <div th:if="${message}" class="alert alert-success" role="alert" th:text="${message}"></div>
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                            <div class="invalid-feedback">
+                                Please provide your current password.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" name="newPassword" required
+                                   pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$"
+                                   title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+                            <div class="invalid-feedback">
+                                Password must contain at least one number, one uppercase and lowercase letter, and at least 8 or more characters.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                            <div class="invalid-feedback">
+                                Please confirm your new password.
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Change Password</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card mb-3 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">My Orders</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(orders)}" class="alert alert-info" role="alert">
+                        You have no orders yet.
+                    </div>
+                    <div th:if="${!#lists.isEmpty(orders)}">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Order Date</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="order : ${orders}">
+                                    <td th:text="${order.id}">Order ID</td>
+                                    <td th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy HH:mm:ss')}">Order Date</td>
+                                    <td th:text="${order.status}">Status</td>
+                                    <td th:text="${order.totalPrice}">Total</td>
+                                    <td>
+                                        <a th:href="@{/account/orders/{orderId}(orderId=${order.id})}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> View Details</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="reviews" class="card mb-3 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">My Product Reviews</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(reviews)}" class="alert alert-info" role="alert">
+                        You have not reviewed any products yet.
+                    </div>
+                    <div th:if="${!#lists.isEmpty(reviews)}">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Rating</th>
+                                    <th>Comment</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="review : ${reviews}">
+                                    <td th:text="${review.product.name}">Product Name</td>
+                                    <td th:text="${review.rating}">Rating</td>
+                                    <td th:text="${review.comment}">Comment</td>
+                                    <td th:text="${#temporals.format(review.reviewDate, 'dd MMM yyyy')}">Review Date</td>
+                                    <td>
+                                        <form th:action="@{/reviews/delete/{reviewId}(reviewId=${review.id})}" method="post" class="d-inline">
+                                            <input type="hidden" name="_method" value="post"/>
+                                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</button>
+                                        </form>
+                                        <button class="btn btn-primary btn-sm ml-1" type="button" data-toggle="collapse" th:data-target="'#editReview-' + ${review.id}">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </button>
+                                        <div th:id="'editReview-' + ${review.id}" class="collapse mt-3">
+                                            <form th:action="@{/reviews/edit/{reviewId}(reviewId=${review.id})}" method="post">
+                                                <input type="hidden" name="productId" th:value="${review.product.id}"/>
+                                                <div class="form-group">
+                                                    <label th:for="'rating-' + ${review.id}">Rating</label>
+                                                    <input type="number" th:id="'rating-' + ${review.id}" name="rating" class="form-control" min="1" max="5" th:value="${review.rating}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label th:for="'comment-' + ${review.id}">Comment</label>
+                                                    <textarea th:id="'comment-' + ${review.id}" name="comment" class="form-control" th:text="${review.comment}"></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
